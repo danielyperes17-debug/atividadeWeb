@@ -1,5 +1,6 @@
 using AppWebExemplo.Components;
 using AppWebExemplo.Configs;
+using AppWebExemplo.DAO;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,7 @@ builder.Services.AddRazorComponents()
 
 // Configuração da Conexão com o Banco de Dados MYSQL
 builder.Services.AddScoped<Conexao>();
+builder.Services.AddScoped<ProcessoDao>();
 
 var app = builder.Build();
 
