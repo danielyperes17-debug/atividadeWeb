@@ -16,6 +16,8 @@ CREATE TABLE processos (
 );
 
 
+select * from processos;
+
 INSERT INTO processos
     (numero_pro, data_pro, interessado_pro, assunto_pro, descricao_pro, situacao_pro)
 VALUES
@@ -27,7 +29,7 @@ VALUES
     ('PROC-2026-006', '2026-03-12', 'Ana Souza', 'Emissao de certidao', 'Solicitacao de emissao de certidao negativa.', 'Concluido'),
     ('PROC-2026-007', '2026-04-05', 'Construtora Horizonte S.A.', 'Aprovacao de projeto', 'Analise e aprovacao de projeto de construcao civil.', 'Em analise'),
     ('PROC-2026-008', '2026-04-20', 'Pedro Almeida', 'Denuncia administrativa', 'Registro de denuncia sobre irregularidade em estabelecimento.', 'Aberto'),
-    ('PROC-2026-009', '2026-05-08', 'Instituto Novo Futuro', 'Convenio institucional', NULL, 'Pendente'),
+    ('PROC-2026-009', '2026-05-08', 'Instituto Novo Futuro', 'Convenio institucional', 'Descricao', 'Pendente'),
     ('PROC-2026-010', '2026-05-25', 'Comercio Central Ltda.', 'Baixa de inscricao', 'Solicitacao de encerramento e baixa da inscricao municipal.', 'Arquivado');
 
 
