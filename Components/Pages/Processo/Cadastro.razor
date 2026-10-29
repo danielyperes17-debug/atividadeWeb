@@ -1,0 +1,195 @@
+﻿
+@page "/processos/cadastro"
+@page "/processos/editar/{Id:int}"
+
+@rendermode InteractiveServer
+
+@using AppWebExemplo.Model
+@using AppWebExemplo.DAO
+@using Microsoft.AspNetCore.Components
+
+@inject ProcessoDAO dao
+@inject NavigationManager NavigationManager
+
+<PageTitle>@Titulo - Sistema de Controle de Processos</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="fw-bold mb-1">@Titulo</h2>
+        <p class="text-muted mb-0">
+            @(Id.HasValue
+                ? "Altere os dados do processo selecionado."
+                : "Preencha os campos para cadastrar um novo processo.")
+        </p>
+    </div>
+</div>
+
+@if (Id.HasValue && !processoEncontrado)
+{
+    <div class="alert alert-warning" role="alert">
+        Processo não encontrado.
+        <a href="/processos" class="alert-link">Voltar para a lista</a>
+    </div>
+}
+else
+{
+    <div class="custom-table-card p-4">
+        <EditForm @key="processo"
+                  Model="@processo"
+                  OnValidSubmit="@Salvar">
+
+            <DataAnnotationsValidator />
+
+            <ValidationSummary class="alert alert-danger" />
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label for="numero" class="form-label">Número</label>
+
+                    <InputText id="numero"
+                               class="form-control"
+                               @bind-Value="processo.Numero" />
+
+                    <ValidationMessage For="@(() => processo.Numero)" />
+                </div>
+
+                <div class="col-md-4">
+                    <label for="data" class="form-label">Data</label>
+
+                    <InputDate id="data"
+                               class="form-control"
+                               @bind-Value="processo.Data" />
+
+                    <ValidationMessage For="@(() => processo.Data)" />
+                </div>
+
+                <div class="col-md-4">
+                    <label for="situacao" class="form-label">Situação</label>
+
+                    <InputSelect id="situacao"
+                                 class="form-select"
+                                 @bind-Value="processo.Situacao">
+                        <option value="Aberto">Aberto</option>
+                        <option value="Em análise">Em análise</option>
+                        <option value="Pendente">Pendente</option>
+                        <option value="Concluído">Concluído</option>
+                        <option value="Arquivado">Arquivado</option>
+                    </InputSelect>
+
+                    <ValidationMessage For="@(() => processo.Situacao)" />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label for="interessado" class="form-label">
+                        Interessado
+                    </label>
+
+                    <InputText id="interessado"
+                               class="form-control"
+                               @bind-Value="processo.Interessado" />
+
+                    <ValidationMessage For="@(() => processo.Interessado)" />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label for="assunto" class="form-label">Assunto</label>
+
+                    <InputText id="assunto"
+                               class="form-control"
+                               @bind-Value="processo.Assunto" />
+
+                    <ValidationMessage For="@(() => processo.Assunto)" />
+                </div>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label for="descricao" class="form-label">
+                        Descrição
+                    </label>
+
+                    <InputTextArea id="descricao"
+                                   class="form-control"
+                                   rows="4"
+                                   @bind-Value="processo.Descricao" />
+
+                    <ValidationMessage For="@(() => processo.Descricao)" />
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-lg"></i>
+                    @(Id.HasValue ? "Atualizar" : "Salvar")
+                </button>
+
+                <a href="/processos" class="btn btn-light border">
+                    Cancelar
+                </a>
+            </div>
+        </EditForm>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int? Id { get; set; }
+
+    private Processo processo = NovoProcesso();
+
+    private bool processoEncontrado = true;
+
+    private string Titulo =>
+        Id.HasValue ? "Editar Processo" : "Cadastro de Processo";
+
+    private static Processo NovoProcesso()
+    {
+        return new Processo
+        {
+            Situacao = "Aberto"
+        };
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (!Id.HasValue)
+        {
+            processo = NovoProcesso();
+            processoEncontrado = true;
+            return;
+        }
+
+        var processoCarregado = dao.ObterPorId(Id.Value);
+
+        processoEncontrado = processoCarregado is not null;
+
+        if (processoCarregado is not null)
+        {
+            processo = processoCarregado;
+        }
+    }
+
+    private void Salvar()
+    {
+        if (Id.HasValue)
+        {
+            if (!processoEncontrado)
+            {
+                return;
+            }
+
+            processo.Id = Id.Value;
+            dao.Atualizar(processo);
+        }
+        else
+        {
+            dao.Inserir(processo);
+        }
+
+        NavigationManager.NavigateTo("/processos");
+    }
+}

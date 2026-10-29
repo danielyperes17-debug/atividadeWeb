@@ -10,7 +10,7 @@ builder.Services.AddRazorComponents()
 
 // Configuração da Conexão com o Banco de Dados MYSQL
 builder.Services.AddScoped<Conexao>();
-builder.Services.AddScoped<ProcessoDao>();
+builder.Services.AddScoped<ProcessoDAO>();
 
 var app = builder.Build();
 
